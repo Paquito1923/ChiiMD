@@ -1,5 +1,5 @@
-let handler = async (m, { command, text }) => {
-	if (!text) return m.reply('Masukkan namamu!')
+let handler = async (m, { text }) => {
+	if (!text) return m.reply('Masukkan namamu!');
 
 	m.reply(
 		`
@@ -30,19 +30,19 @@ let handler = async (m, { command, text }) => {
 ┃• Ketakutan     : ${randomPersen()}
 ╰━━━━━━━━━━━━━━━
 `.trim()
-	)
-}
+	);
+};
 
-handler.help = ['ceksifat']
-handler.tags = ['fun']
-handler.command = /^ceksifat$/i
+handler.help = ['ceksifat'];
+handler.tags = ['fun'];
+handler.command = /^ceksifat$/i;
 
-export default handler
+export default handler;
 
 function pickRandom(list) {
-	return list[Math.floor(Math.random() * list.length)]
+	return list[Math.floor(Math.random() * list.length)];
 }
 
 function randomPersen() {
-	return (Math.random() * 100).toFixed(1) + '%'
+	return (Math.random() * 100).toFixed(1) + '%';
 }

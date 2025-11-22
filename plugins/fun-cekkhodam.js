@@ -1,10 +1,10 @@
 let handler = async (m, { conn, usedPrefix, command, text }) => {
-	conn.khodam = conn.khodam || {}
+	conn.khodam = conn.khodam || {};
 
-	if (!text) return m.reply(`Masukkan nama kamu!\n\nContoh:\n${usedPrefix + command} Abay gay`)
+	if (!text) return m.reply(`Masukkan nama kamu!\n\nContoh:\n${usedPrefix + command} Abay gay`);
 
-	let data = conn.khodam[text] || pickRandom(khodamList)
-	conn.khodam[text] = data
+	let data = conn.khodam[text] || pickRandom(khodamList);
+	conn.khodam[text] = data;
 
 	let result = `
 👤 Nama: *${text}*
@@ -12,19 +12,19 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
 
 📖 Penjelasan:
 ${data.deskripsi}
-  `.trim()
+  `.trim();
 
-	await m.reply(result)
-}
+	await m.reply(result);
+};
 
-handler.help = ['cekkhodam']
-handler.tags = ['fun']
-handler.command = /^(cek(khodam|kodam)|kodam|khodam)$/i
+handler.help = ['cekkhodam'];
+handler.tags = ['fun'];
+handler.command = /^(cek(khodam|kodam)|kodam|khodam)$/i;
 
-export default handler
+export default handler;
 
 function pickRandom(list) {
-	return list[Math.floor(Math.random() * list.length)]
+	return list[Math.floor(Math.random() * list.length)];
 }
 
 const khodamList = [
@@ -100,4 +100,4 @@ const khodamList = [
 	{ nama: 'Korek Api Emosian', deskripsi: 'Nyala pas ga dibutuhin doang' },
 	{ nama: 'Cermin Sakti', deskripsi: 'Kalau kamu liat, wajah jadi mantan' },
 	{ nama: 'Bedak Gaib', deskripsi: 'Dipake ilang, muka ikut ilang' },
-]
+];

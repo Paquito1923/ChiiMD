@@ -1,12 +1,12 @@
-import { canLevelUp, xpRange } from '../lib/levelling.js'
+import { canLevelUp } from '../lib/levelling.js';
 
-let handler = (m) => m
+let handler = (m) => m;
 
 handler.before = function (m) {
-	let user = global.db.data.users[m.sender]
-	let before = user.level * 1
+	let user = global.db.data.users[m.sender];
+	let before = user.level * 1;
 	if (user.autolevelup) {
-		while (canLevelUp(user.level, user.exp, global.multiplier)) user.level++
+		while (canLevelUp(user.level, user.exp, global.multiplier)) user.level++;
 	}
 
 	let role =
@@ -180,14 +180,14 @@ handler.before = function (m) {
 																																																													  user.level <=
 																																																															1000
 																																																													? 'Demigod'
-																																																													: ' 𖤐 G O D 𖤐'
-	user.role = role
+																																																													: ' 𖤐 G O D 𖤐';
+	user.role = role;
 
 	if (user.autolevelup && before !== user.level) {
-		m.reply(`Selamat, Kamu Telah Naik Level!\n\n• Level Up : *${before}* -> *${user.level}*`)
+		m.reply(`Selamat, Kamu Telah Naik Level!\n\n• Level Up : *${before}* -> *${user.level}*`);
 	}
 
-	return true
-}
+	return true;
+};
 
-export default handler
+export default handler;

@@ -1,84 +1,86 @@
-console.log('🐾 Starting...')
+console.log('🐾 Starting...');
 
-import { join, dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { setupMaster, fork } from 'cluster'
-import { watchFile, unwatchFile } from 'fs'
-import { createInterface } from 'readline'
+import { Worker } from 'worker_threads';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { watchFile, unwatchFile } from 'fs';
+import readline from 'readline';
 
-// https://stackoverflow.com/a/50052194
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const rl = createInterface(process.stdin, process.stdout)
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const rl = readline.createInterface(process.stdin, process.stdout);
 
-let isRunning = false
-let restartTimer = null
+let worker = null;
+let running = false;
+let restartTimer = null;
 
-/**
- * Start a js file
- * @param {String} file `path/to/file`
- */
 function start(file) {
-	if (isRunning) return
-	isRunning = true
+	if (running) return;
+	running = true;
+	const full = join(__dirname, file);
 
-	const args = [join(__dirname, file), ...process.argv.slice(2)]
-	setupMaster({
-		exec: args[0],
-		args: args.slice(1),
-	})
-	const p = fork()
-
+	if (worker) worker.terminate();
+	worker = new Worker(full);
 	if (restartTimer) {
-		clearTimeout(restartTimer)
-		restartTimer = null
+		clearTimeout(restartTimer);
+		restartTimer = null;
 	}
 
-	p.on('message', (data) => {
-		console.log('[RECEIVED]', data)
-		switch (data) {
-			case 'reset':
-				p.process.kill()
-				isRunning = false
-				start.apply(this, arguments)
-				break
-			case 'uptime':
-				p.send(process.uptime())
-				break
+	worker.on('message', (msg) => {
+		console.log('[MESSAGE]', msg);
+
+		if (msg === 'restart' || msg === 'reset') {
+			restart();
 		}
-	})
+	});
 
-	p.on('exit', (_, code) => {
-		isRunning = false
-		console.error('[❗] Exited with code:', code)
-		if (code === 0) return
-
-		restartTimer = setTimeout(
-			() => {
-				console.log('[⏰] Restarting automatically...')
-				process.send('reset')
-			},
-			30 * 60 * 1000
-		)
-
-		watchFile(args[0], () => {
-			unwatchFile(args[0])
-			start(file)
-		})
-	})
+	worker.on('exit', (code) => {
+		console.log('❗ Worker exited with code', code);
+		running = false;
+		if (code !== 0) {
+			restartTimer = setTimeout(
+				() => {
+					console.log('⏳ Auto restart...');
+					restart();
+				},
+				30 * 60 * 1000
+			);
+		}
+		watchFile(full, () => {
+			unwatchFile(full);
+			console.log('♻️ File updated → Restarting...');
+			start(file);
+		});
+	});
 
 	if (!rl.listenerCount('line')) {
 		rl.on('line', (line) => {
-			const cmd = line.trim().toLowerCase()
-			if (!cmd) return
+			const cmd = line.trim().toLowerCase();
+			if (!cmd) return;
+
 			if (cmd === 'exit') {
-				console.log('[🛑] Exiting manually...')
-				try {
-					p.process.kill()
-				} catch {}
-				process.exit(0)
-			} else p.send(cmd)
-		})
+				console.log('⛔ Exiting...');
+				worker?.terminate();
+				process.exit(0);
+			}
+			if (cmd === 'restart' || cmd === 'reset') {
+				console.log('🍃Restart...');
+				restart();
+			}
+
+			worker?.postMessage(cmd);
+		});
 	}
 }
 
-start('main.js')
+function restart() {
+	if (worker) {
+		try {
+			worker.terminate();
+		} catch {}
+	}
+	running = false;
+
+	start('main.js');
+}
+
+start('main.js');

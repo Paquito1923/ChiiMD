@@ -1,15 +1,15 @@
 let handler = async (m, { conn }) => {
-	conn.reply(m.chat, pickRandom(ganteng), m)
-}
+	conn.reply(m.chat, pickRandom(ganteng), m);
+};
 
-handler.help = ['gantengcek']
-handler.tags = ['fun']
-handler.command = /^(cekganteng|gantengcek)$/i
+handler.help = ['gantengcek'];
+handler.tags = ['fun'];
+handler.command = /^(cekganteng|gantengcek)$/i;
 
-export default handler
+export default handler;
 
 function pickRandom(list) {
-	return list[Math.floor(Math.random() * list.length)]
+	return list[Math.floor(Math.random() * list.length)];
 }
 
 const ganteng = [
@@ -31,4 +31,4 @@ const ganteng = [
 	'Ganteng Level : 94%\n\nAuto jadi fyp cewek-cewek TikTok.',
 	'Ganteng Level : 97%\n\nKalo nongol, cermin nyalamin dulu.',
 	'Ganteng Level : 100%\n\nLU EMANG COWOK TERGANTENG SEALAM SEMESTA!! 😎🔥',
-]
+];

@@ -1,24 +1,24 @@
-import axios from 'axios'
-import { delay } from 'baileys'
+import axios from 'axios';
+import { delay } from 'baileys';
 
 let handler = async (m, { text }) => {
-	const nominal = parseInt(text)
-	if (!nominal) return m.reply('Jumlahnya berapa?')
-	if (nominal < 1000) return m.reply('Minimal 1.000 ya.')
-	if (nominal > 1000000) return m.reply('Emg bneran?')
+	const nominal = parseInt(text);
+	if (!nominal) return m.reply('Jumlahnya berapa?');
+	if (nominal < 1000) return m.reply('Minimal 1.000 ya.');
+	if (nominal > 1000000) return m.reply('Emg bneran?');
 
-	if (!global.pakasir || !pakasir.slug || !pakasir.apikey) return m.reply('`pakasir.slug` dan `pakasir.apikey` belum di isi.')
+	if (!global.pakasir || !pakasir.slug || !pakasir.apikey) return m.reply('`pakasir.slug` dan `pakasir.apikey` belum di isi.');
 
-	const cqris = await createQris(pakasir.slug, pakasir.apikey, nominal)
-	const expiredAt = new Date(cqris.expired_at)
-	expiredAt.setHours(expiredAt.getHours() - 1)
-	expiredAt.setMinutes(expiredAt.getMinutes() + (global.pakasir.expired || 1))
+	const cqris = await createQris(pakasir.slug, pakasir.apikey, nominal);
+	const expiredAt = new Date(cqris.expired_at);
+	expiredAt.setHours(expiredAt.getHours() - 1);
+	expiredAt.setMinutes(expiredAt.getMinutes() + (global.pakasir.expired || 1));
 	const expiredTime = expiredAt.toLocaleTimeString('id-ID', {
 		hour: '2-digit',
 		minute: '2-digit',
 		hour12: false,
 		timeZone: 'Asia/Jakarta',
-	})
+	});
 
 	const sQris = await conn.sendMessage(
 		m.chat,
@@ -32,31 +32,31 @@ let handler = async (m, { text }) => {
 				`📦 *Order ID:* #${cqris.order_id}`,
 		},
 		{ quoted: m }
-	)
+	);
 
-	let status = ''
+	let status = '';
 	while (status !== 'completed') {
 		if (new Date() >= expiredAt) {
-			await conn.sendMessage(m.chat, { delete: sQris.key })
-			return m.reply('⚠️ QRIS sudah *expired*, silakan buat ulang.')
+			await conn.sendMessage(m.chat, { delete: sQris.key });
+			return m.reply('⚠️ QRIS sudah *expired*, silakan buat ulang.');
 		}
 
-		const res = await checkStatus(pakasir.slug, pakasir.apikey, cqris.order_id, nominal)
+		const res = await checkStatus(pakasir.slug, pakasir.apikey, cqris.order_id, nominal);
 		if (res && res.status === 'completed') {
-			status = 'completed'
-			await conn.sendMessage(m.chat, { delete: sQris.key })
-			m.reply('✅ Pembayaran berhasil!\nTerima kasih sudah donasi 🙏')
-			break
+			status = 'completed';
+			await conn.sendMessage(m.chat, { delete: sQris.key });
+			m.reply('✅ Pembayaran berhasil!\nTerima kasih sudah donasi 🙏');
+			break;
 		}
 
-		await delay(5000)
+		await delay(5000);
 	}
-}
+};
 
-handler.help = ['donate']
-handler.tags = ['main']
-handler.command = /^(donate|donasi|traktir)$/i
-export default handler
+handler.help = ['donate'];
+handler.tags = ['main'];
+handler.command = /^(donate|donasi|traktir)$/i;
+export default handler;
 
 async function createQris(project, apikey, amount) {
 	try {
@@ -69,20 +69,20 @@ async function createQris(project, apikey, amount) {
 				api_key: apikey,
 			},
 			{ headers: { 'Content-Type': 'application/json' } }
-		)
+		);
 
-		if (!res.data?.payment) throw new Error('Gagal membuat QRIS.')
-		return res.data.payment
+		if (!res.data?.payment) throw new Error('Gagal membuat QRIS.');
+		return res.data.payment;
 	} catch (e) {
-		throw e
+		throw new Error('Gagal membuat QRIS: ' + e.message);
 	}
 }
 
 async function checkStatus(project, apikey, orderId, amount) {
 	try {
-		const res = await axios.get(`https://app.pakasir.com/api/transactiondetail?project=${project}&amount=${amount}&order_id=${orderId}&api_key=${apikey}`)
-		return res.data.transaction
+		const res = await axios.get(`https://app.pakasir.com/api/transactiondetail?project=${project}&amount=${amount}&order_id=${orderId}&api_key=${apikey}`);
+		return res.data.transaction;
 	} catch (e) {
-		throw e
+		throw new Error('Gagal mengecek status QRIS: ' + e.message);
 	}
 }

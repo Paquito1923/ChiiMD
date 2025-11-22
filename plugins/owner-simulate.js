@@ -1,4 +1,4 @@
-let handler = async (m, { conn, usedPrefix, command, args: [event], text }) => {
+let handler = async (m, { conn, usedPrefix, command, args: [event] }) => {
 	if (!event)
 		return await conn.reply(
 			m.chat,
@@ -8,30 +8,30 @@ ${usedPrefix + command} bye @user
 ${usedPrefix + command} promote @user
 ${usedPrefix + command} demote @user`.trim(),
 			m
-		)
-	let part = m.mentionedJid[0] || m.sender
-	let act = false
-	m.reply(`*Simulating ${event}...*`)
+		);
+	let part = m.mentionedJid[0] || m.sender;
+	let act = false;
+	m.reply(`*Simulating ${event}...*`);
 	switch (event.toLowerCase()) {
 		case 'add':
 		case 'invite':
 		case 'welcome':
-			act = 'add'
-			break
+			act = 'add';
+			break;
 		case 'bye':
 		case 'kick':
 		case 'leave':
 		case 'remove':
-			act = 'remove'
-			break
+			act = 'remove';
+			break;
 		case 'promote':
-			act = 'promote'
-			break
+			act = 'promote';
+			break;
 		case 'demote':
-			act = 'demote'
-			break
+			act = 'demote';
+			break;
 		default:
-			throw eror
+			throw eror;
 	}
 	if (act)
 		return conn.participantsUpdate({
@@ -39,11 +39,11 @@ ${usedPrefix + command} demote @user`.trim(),
 			participants: [{ id: part }],
 			action: act,
 			simulate: true,
-		})
-}
-handler.help = ['simulate']
-handler.tags = ['owner']
-handler.owner = true
+		});
+};
+handler.help = ['simulate'];
+handler.tags = ['owner'];
+handler.owner = true;
 
-handler.command = /^(simulate|simulasi)$/i
-export default handler
+handler.command = /^(simulate|simulasi)$/i;
+export default handler;

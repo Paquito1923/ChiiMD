@@ -15,11 +15,11 @@ ${Object.entries(global.db.data.sticker)
 				.map((x) => x.mentionedJid)
 				.reduce((a, b) => [...a, ...b], []),
 		}
-	)
-}
+	);
+};
 
-handler.help = ['listcmd']
-handler.tags = ['database']
-handler.command = ['listcmd']
+handler.help = ['listcmd'];
+handler.tags = ['database'];
+handler.command = ['listcmd'];
 
-export default handler
+export default handler;

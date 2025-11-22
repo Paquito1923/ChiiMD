@@ -1,8 +1,8 @@
-import moment from 'moment-timezone'
-import * as levelling from '../lib/levelling.js'
-import fs from 'fs'
+import moment from 'moment-timezone';
+import * as levelling from '../lib/levelling.js';
+import fs from 'fs';
 
-const handler = async (m, { conn, usedPrefix: _p, isOwner, __dirname, args }) => {
+const handler = async (m, { conn, usedPrefix: _p, isOwner, args }) => {
 	const allTags = {
 		main: 'Main Menu',
 		ai: 'Ai Menu',
@@ -15,19 +15,19 @@ const handler = async (m, { conn, usedPrefix: _p, isOwner, __dirname, args }) =>
 		xp: 'XP & Level Menu',
 		info: 'Info Menu',
 		owner: 'Owner Menu',
-	}
+	};
 
-	let teks = (args[0] || '').toLowerCase()
-	let tags = {}
+	let teks = (args[0] || '').toLowerCase();
+	let tags = {};
 
 	if (!Object.keys(allTags).includes(teks) && !Object.values(allTags).some((v) => v.toLowerCase().includes(teks))) {
-		teks = 'all'
+		teks = 'all';
 	}
 
-	tags = teks === 'all' ? { ...allTags } : Object.fromEntries(Object.entries(allTags).filter(([k, v]) => k === teks || v.toLowerCase().includes(teks)))
+	tags = teks === 'all' ? { ...allTags } : Object.fromEntries(Object.entries(allTags).filter(([k, v]) => k === teks || v.toLowerCase().includes(teks)));
 
-	if (!isOwner) delete tags.owner
-	if (!m.isGroup) delete tags.group
+	if (!isOwner) delete tags.owner;
+	if (!m.isGroup) delete tags.group;
 
 	const defaultMenu = {
 		before: `
@@ -52,10 +52,10 @@ const handler = async (m, { conn, usedPrefix: _p, isOwner, __dirname, args }) =>
 		body: '│ ◦ %cmd %flags',
 		footer: '└—',
 		after: '',
-	}
+	};
 
 	try {
-		const plugins = Object.values(global.plugins).filter((p) => !p.disabled)
+		const plugins = Object.values(global.plugins).filter((p) => !p.disabled);
 		const help = plugins.map((p) => ({
 			help: Array.isArray(p.help) ? p.help : [p.help],
 			tags: Array.isArray(p.tags) ? p.tags : [p.tags],
@@ -64,7 +64,7 @@ const handler = async (m, { conn, usedPrefix: _p, isOwner, __dirname, args }) =>
 			premium: p.premium ? '🄿' : '',
 			owner: p.owner ? '🄾' : '',
 			mods: p.mods ? '🄼' : '',
-		}))
+		}));
 
 		const text = [
 			defaultMenu.before,
@@ -73,35 +73,35 @@ const handler = async (m, { conn, usedPrefix: _p, isOwner, __dirname, args }) =>
 					.filter((p) => p.tags.includes(tag))
 					.flatMap((p) =>
 						p.help.map((h) => {
-							const cmd = p.prefix ? h : `${_p}${h}`
-							const flags = [p.limit, p.premium, p.owner, p.rowner].join(' ')
+							const cmd = p.prefix ? h : `${_p}${h}`;
+							const flags = [p.limit, p.premium, p.owner, p.rowner].join(' ');
 							return defaultMenu.body
 								.replace(/%cmd/g, cmd)
 								.replace(/%flags/g, flags)
-								.trim()
+								.trim();
 						})
 					)
-					.join('\n')
-				return `${defaultMenu.header.replace(/%category/g, tags[tag])}\n${items}\n${defaultMenu.footer}`
+					.join('\n');
+				return `${defaultMenu.header.replace(/%category/g, tags[tag])}\n${items}\n${defaultMenu.footer}`;
 			}),
 			defaultMenu.after,
-		].join('\n')
+		].join('\n');
 
-		let { exp, limit, money, level, role, registered } = global.db.data.users[m.sender]
-		let { min, xp, max } = levelling.xpRange(level, global.multiplier)
-		let name = registered ? global.db.data.users[m.sender].name : conn.getName(m.sender)
-		let _uptime = process.uptime() * 1000
-		let uptime = clockString(_uptime)
-		let totalreg = Object.keys(global.db.data.users).length
-		let rtotalreg = Object.values(global.db.data.users).filter((user) => user.registered == true).length
-		let d = new Date(new Date() + 3600000)
-		let locale = 'id-ID'
-		let week = d.toLocaleDateString(locale, { weekday: 'long' })
+		let { exp, limit, money, level, role, registered } = global.db.data.users[m.sender];
+		let { min, xp, max } = levelling.xpRange(level, global.multiplier);
+		let name = registered ? global.db.data.users[m.sender].name : conn.getName(m.sender);
+		let _uptime = process.uptime() * 1000;
+		let uptime = clockString(_uptime);
+		let totalreg = Object.keys(global.db.data.users).length;
+		let rtotalreg = Object.values(global.db.data.users).filter((user) => user.registered == true).length;
+		let d = new Date(new Date() + 3600000);
+		let locale = 'id-ID';
+		let week = d.toLocaleDateString(locale, { weekday: 'long' });
 		let date = d.toLocaleDateString(locale, {
 			day: 'numeric',
 			month: 'long',
 			year: 'numeric',
-		})
+		});
 
 		const replace = {
 			'%': '',
@@ -122,7 +122,7 @@ const handler = async (m, { conn, usedPrefix: _p, isOwner, __dirname, args }) =>
 			rtotalreg,
 			role,
 			readmore: readMore,
-		}
+		};
 
 		conn.sendMessage(
 			m.chat,
@@ -146,58 +146,58 @@ const handler = async (m, { conn, usedPrefix: _p, isOwner, __dirname, args }) =>
 				},
 			},
 			{ quoted: m }
-		)
+		);
 	} catch (e) {
-		console.error(e)
-		m.reply('Terjadi kesalahan saat menampilkan menu.')
+		console.error(e);
+		m.reply('Terjadi kesalahan saat menampilkan menu.');
 	}
-}
+};
 
-handler.help = ['menu']
-handler.command = /^(menu|help|\?)$/i
-handler.exp = 3
+handler.help = ['menu'];
+handler.command = /^(menu|help|\?)$/i;
+handler.exp = 3;
 
-export default handler
+export default handler;
 
-const more = String.fromCharCode(8206)
-const readMore = more.repeat(4001)
+const more = String.fromCharCode(8206);
+const readMore = more.repeat(4001);
 
 function style(text, style = 1) {
-	const xStr = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('')
+	const xStr = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('');
 	const yStr = {
 		1: 'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘqʀꜱᴛᴜᴠᴡxʏᴢ1234567890',
-	}[style].split('')
+	}[style].split('');
 	return text
 		.toLowerCase()
 		.split('')
 		.map((char) => {
-			const i = xStr.indexOf(char)
-			return i !== -1 ? yStr[i] : char
+			const i = xStr.indexOf(char);
+			return i !== -1 ? yStr[i] : char;
 		})
-		.join('')
+		.join('');
 }
 
 function clockString(ms) {
-	let h = isNaN(ms) ? '--' : Math.floor(ms / 3600000)
-	let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
-	let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
-	return [h, m, s].map((v) => v.toString().padStart(2, 0)).join(':')
+	let h = isNaN(ms) ? '--' : Math.floor(ms / 3600000);
+	let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60;
+	let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60;
+	return [h, m, s].map((v) => v.toString().padStart(2, 0)).join(':');
 }
 
 function ucapan() {
-	const time = moment.tz('Asia/Jakarta').format('HH')
-	let res = 'Selamat dinihari'
+	const time = moment.tz('Asia/Jakarta').format('HH');
+	let res = 'Selamat dinihari';
 	if (time >= 4) {
-		res = 'Selamat pagi'
+		res = 'Selamat pagi';
 	}
 	if (time > 10) {
-		res = 'Selamat siang'
+		res = 'Selamat siang';
 	}
 	if (time >= 15) {
-		res = 'Selamat sore'
+		res = 'Selamat sore';
 	}
 	if (time >= 18) {
-		res = 'Selamat malam'
+		res = 'Selamat malam';
 	}
-	return res
+	return res;
 }
