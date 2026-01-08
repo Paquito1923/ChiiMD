@@ -30,11 +30,10 @@ export async function handler(chatUpdate) {
 
 		const isROwner = [conn.decodeJid(global.conn.user.id), ...global.owner.map(([number]) => number)].map((v) => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender);
 		const isOwner = isROwner || m.fromMe;
-		const isMods = isOwner || global.mods.map((v) => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender);
 		const isPrems = isROwner || db.data.users[m.sender].premiumTime > 0;
 
-		if (global.db.data.settings[this.user.jid].gconly && !m.isGroup && !isMods && !isPrems) return;
-		if (!global.db.data.settings[this.user.jid].public && !isMods && !m.fromMe) return;
+		if (global.db.data.settings[this.user.jid].gconly && !m.isGroup && !isOwner && !isPrems) return;
+		if (!global.db.data.settings[this.user.jid].public && !isOwner && !m.fromMe) return;
 
 		if (m.isBaileys) return;
 		m.exp += Math.ceil(Math.random() * 10);
@@ -156,11 +155,6 @@ export async function handler(chatUpdate) {
 				if (plugin.owner && !isOwner) {
 					// Number Owner
 					fail('owner', m, this);
-					continue;
-				}
-				if (plugin.mods && !isMods) {
-					// Moderator
-					fail('mods', m, this);
 					continue;
 				}
 				if (plugin.premium && !isPrems) {
@@ -324,7 +318,7 @@ export async function participantsUpdate({ id, participants, action, simulate = 
 			if (chat.welcome) {
 				for (let user of participants) {
 					user = this.getJid(user?.phoneNumber || user.id);
-					let tamnel = await this.profilePictureUrl(user, 'preview');
+					const tamnel = await this.profilePictureUrl(user, 'image', 'buffer');
 					text = (action === 'add' ? chat.sWelcome || this.welcome || conn.welcome || 'Welcome, @user!' : chat.sBye || this.bye || conn.bye || 'Bye, @user!')
 						.replace('@user', `@${user.split('@')[0]}`)
 						.replace('@subject', this.getName(id))
@@ -419,7 +413,6 @@ global.dfail = (type, m, conn) => {
 	let msg = {
 		rowner: 'Only Developer - Command ini hanya untuk developer bot',
 		owner: 'Only Owner - Command ini hanya untuk owner bot',
-		mods: 'Only Moderator - Command ini hanya untuk moderator bot',
 		premium: 'Only Premium - Command ini hanya untuk pengguna premium',
 		group: 'Group Chat - Command ini hanya bisa dipakai di dalam grup',
 		private: 'Private Chat - Command ini hanya bisa dipakai di private chat',

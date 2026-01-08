@@ -64,7 +64,6 @@ const handler = async (m, { conn, usedPrefix: _p, isOwner, args }) => {
 			limit: p.limit ? '🄻' : '',
 			premium: p.premium ? '🄿' : '',
 			owner: p.owner ? '🄾' : '',
-			mods: p.mods ? '🄼' : '',
 		}));
 
 		const text = [
@@ -140,9 +139,16 @@ const handler = async (m, { conn, usedPrefix: _p, isOwner, args }) => {
 					externalAdReply: {
 						title: global.namebot,
 						body: `${global.namebot} By ${global.author}`,
-						thumbnail: fs.readFileSync(global.pathResolve('../media/menu.jpg')),
+						thumbnail: fs.readFileSync('./media/menu.jpg'),
+						thumbnailUrl: global.source,
+						sourceUrl: global.source,
 						mediaType: 1,
 						renderLargerThumbnail: true,
+					},
+					forwardedNewsletterMessageInfo: {
+						newsletterJid: '120363405875325459@newsletter',
+						serverMessageId: 142,
+						newsletterName: global.namebot,
 					},
 				},
 			},

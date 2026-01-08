@@ -42,16 +42,7 @@ ${sortedMoney.slice(0, len).map(({ jid, money }, i) => `${i + 1}. ${participants
 handler.help = ['leaderboard'];
 handler.tags = ['rpg'];
 handler.command = /^(leaderboard|lb)$/i;
-handler.owner = false;
-handler.mods = false;
-handler.premium = false;
 handler.group = true;
-handler.private = false;
-
-handler.admin = false;
-handler.botAdmin = false;
-
-handler.fail = null;
 handler.exp = 0;
 
 export default handler;

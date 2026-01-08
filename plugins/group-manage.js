@@ -12,7 +12,7 @@ const handler = async (m, { text, participants, groupMetadata, command }) => {
 			{
 				if (inGc) return m.reply('User sudah ada didalam grup!');
 				const response = await conn.groupParticipantsUpdate(m.chat, [target], 'add');
-				const jpegThumbnail = await conn.profilePictureUrl(m.chat, 'image');
+				const jpegThumbnail = await conn.profilePictureUrl(m.chat, 'image', 'buffer');
 
 				for (const participant of response) {
 					const jid = participant.content.attrs.phone_number || participant.content.attrs.jid;

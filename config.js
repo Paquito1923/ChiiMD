@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url';
 
 global.pairingNumber = 6285955111472;
 global.owner = [['6287701656619', 'Agus', true]];
-global.mods = [];
 
 global.namebot = 'ChiiBOT - MD';
 global.author = 'Agus';

@@ -49,9 +49,9 @@ export async function ytdown(url, type = 'video') {
 	const { data } = await axios.post('https://ytdown.to/proxy.php', new URLSearchParams({ url }), { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
 
 	const api = data.api;
+	if (api.status == 'ERROR') throw new Error(api.message);
 
 	const media = api.mediaItems.find((m) => m.type.toLowerCase() === type.toLowerCase());
-
 	if (!media) throw new Error('Media type not found');
 
 	while (true) {

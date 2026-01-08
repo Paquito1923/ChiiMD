@@ -101,6 +101,7 @@ const connectionOptions = {
 	keepAliveIntervalMs: 30_000,
 	retryRequestDelayMs: 250,
 	maxMsgRetryCount: 5,
+	cachedGroupMetadata: (jid) => conn.chats[jid],
 };
 
 global.conn = makeWASocket(connectionOptions);
@@ -161,8 +162,6 @@ async function connectionUpdate(update) {
 			console.log(chalk.yellow('Restart Required, Restarting....'));
 		} else if (output.statusCode === 428) {
 			console.log(chalk.yellow('Connection closed, Restarting....'));
-		} else if (output.statusCode === 408) {
-			console.log(chalk.yellow('Connection timed out, Restarting....'));
 		} else if (output.statusCode === 408) {
 			console.log(chalk.yellow('Connection timed out, Restarting....'));
 		} else {
