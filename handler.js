@@ -5,8 +5,6 @@ import path from 'path';
 import { unwatchFile, watchFile } from 'fs';
 import chalk from 'chalk';
 
-const isNumber = (x) => typeof x === 'number' && !isNaN(x);
-
 /**
  * Handle messages upsert
  * @param {import('baileys').BaileysEventMap<unknown>['messages.upsert']} groupsUpdate
@@ -239,10 +237,8 @@ export async function handler(chatUpdate) {
 										data.jid
 									);
 							}
-						m.reply(text);
 					}
 				} finally {
-					// m.reply(util.format(_user))
 					if (typeof plugin.after === 'function') {
 						try {
 							await plugin.after.call(this, m, extra);
@@ -258,36 +254,32 @@ export async function handler(chatUpdate) {
 	} catch (e) {
 		console.error(e);
 	} finally {
-		//console.log(global.db.data.users[m.sender])
 		let user,
 			stats = global.db.data.stats;
+
 		if (m) {
 			if (m.sender && (user = global.db.data.users[m.sender])) {
-				user.exp += m.exp;
-				user.limit -= m.limit * 1;
+				user.exp += Number(m.exp || 0);
+				user.limit -= Number(m.limit || 0);
 			}
 
-			let stat;
 			if (m.plugin) {
-				let now = Date.now();
-				if (m.plugin in stats) {
-					stat = stats[m.plugin];
-					if (!isNumber(stat.total)) stat.total = 1;
-					if (!isNumber(stat.success)) stat.success = m.error != null ? 0 : 1;
-					if (!isNumber(stat.last)) stat.last = now;
-					if (!isNumber(stat.lastSuccess)) stat.lastSuccess = m.error != null ? 0 : now;
-				} else
-					stat = stats[m.plugin] = {
-						total: 1,
-						success: m.error != null ? 0 : 1,
-						last: now,
-						lastSuccess: m.error != null ? 0 : now,
-					};
-				stat.total += 1;
-				stat.last = now;
-				if (m.error == null) {
-					stat.success += 1;
-					stat.lastSuccess = now;
+				const now = Date.now();
+
+				stats[m.plugin] = {
+					total: 0,
+					success: 0,
+					last: 0,
+					lastSuccess: 0,
+					...stats[m.plugin],
+				};
+
+				stats[m.plugin].total++;
+				stats[m.plugin].last = now;
+
+				if (!m.error) {
+					stats[m.plugin].success++;
+					stats[m.plugin].lastSuccess = now;
 				}
 			}
 		}

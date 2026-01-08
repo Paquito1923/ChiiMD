@@ -2,12 +2,16 @@ import os from 'os';
 import fs from 'fs';
 
 let handler = async (m) => {
-	let start = Date.now();
-
+	const start = Date.now();
 	await m.react('🍌');
 
+	const totalMem = os.totalmem();
+	const freeMem = os.freemem();
+	const usedMem = totalMem - freeMem;
+	const memPercent = ((usedMem / totalMem) * 100).toFixed(1);
+
 	let cap = `\`Server Information\`
-* Running On : ${process.env.username === 'root' ? 'VPS' : 'HOSTING ( PANEL )'}
+* Running On : ${process.env.USER === 'root' ? 'VPS' : 'HOSTING ( PANEL )'}
 * Home Dir : ${os.homedir()}
 * Tmp Dir : ${os.tmpdir()} *( ${fs.readdirSync(os.tmpdir()).length} Files )*
 * Hostname : ${os.hostname()}
@@ -16,9 +20,10 @@ let handler = async (m) => {
 
 \`Management Server\`
 * Bot Speed : ${Date.now() - start} ms
-* Uptime : ${toTime(process.uptime() * 1000)}
-* Total Memory : ${formatSize(os.freemem())}/${formatSize(os.totalmem())}
-* CPU : ${os.cpus()[0].model} ( ${os.cpus().length} CORE )
+* Uptime Bot : ${toTime(process.uptime() * 1000)}
+* Uptime Server : ${toTime(os.uptime() * 1000)}
+* Memory : ${formatSize(usedMem)} / ${formatSize(totalMem)} (${memPercent}%)
+* CPU : ${os.cpus()[0].model}
 * Release : ${os.release()}
 * Type : ${os.type()}`;
 
@@ -35,21 +40,13 @@ function toTime(ms) {
 	let h = Math.floor(ms / 3600000);
 	let m = Math.floor(ms / 60000) % 60;
 	let s = Math.floor(ms / 1000) % 60;
-	return [h, m, s].map((v) => v.toString().padStart(2, 0)).join(':');
+
+	if (h > 0) return `${h} Jam ${m} Menit ${s} Detik`;
+	if (m > 0) return `${m} Menit ${s} Detik`;
+	return `${s} Detik`;
 }
 
 function formatSize(size) {
-	function round(value, precision) {
-		var multiplier = Math.pow(10, precision || 0);
-		return Math.round(value * multiplier) / multiplier;
-	}
-	var KB = 1024;
-	var MB = KB * 1024;
-	var GB = MB * 1024;
-	var TB = GB * 1024;
-	if (size < KB) return size + 'B';
-	if (size < MB) return round(size / KB, 1) + 'KB';
-	if (size < GB) return round(size / MB, 1) + 'MB';
-	if (size < TB) return round(size / GB, 1) + 'GB';
-	return round(size / TB, 1) + 'TB';
+	const multiplier = Math.pow(10, 1);
+	return Math.round((size / (1024 * 1024)) * multiplier) / multiplier + 'MiB';
 }
