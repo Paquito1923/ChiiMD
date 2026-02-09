@@ -316,26 +316,7 @@ export async function participantsUpdate({ id, participants, action, simulate = 
 						.replace('@user', `@${user.split('@')[0]}`)
 						.replace('@subject', this.getName(id))
 						.replace('@desc', groupMetadata.desc || '');
-					this.sendMessage(
-						id,
-						{
-							text,
-							contextInfo: {
-								mentionedJid: [user],
-								externalAdReply: {
-									title: action == 'add' ? '💌 WELCOME' : '🐾 BYE',
-									body: action == 'add' ? 'YAELAH BEBAN GROUP NAMBAH 1 :(' : 'BYE BEBAN! :)',
-									mediaType: 1,
-									previewType: 'PHOTO',
-									renderLargerThumbnail: true,
-									thumbnail: tamnel,
-								},
-							},
-						},
-						{
-							ephemeralExpiration: groupMetadata.ephemeralDuration,
-						}
-					);
+					this.adReply(id, text, tamnel, null, { title: action == 'add' ? '💌 WELCOME' : '🐾 BYE', description: action == 'add' ? 'YAELAH BEBAN GROUP NAMBAH 1 :(' : 'BYE BEBAN! :)' });
 				}
 			}
 			break;

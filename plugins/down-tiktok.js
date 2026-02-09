@@ -5,7 +5,7 @@ let handler = async (m, { text, usedPrefix, command }) => {
 
 		const parseUrl = input.match(regex)?.[0];
 		if (parseUrl) {
-			m.reply('🔁');
+			m.react('🔁');
 			let res = await (await fetch(`https://www.tikwm.com/api/?url=${parseUrl}&hd=1`)).json();
 			if (!res || !res.data) return m.reply('Gagal mengambil data dari TikTok.');
 

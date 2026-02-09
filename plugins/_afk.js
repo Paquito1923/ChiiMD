@@ -1,6 +1,6 @@
 export function before(m) {
 	let user = global.db.data.users[m.sender];
-	if (user.afk > -1) {
+	if (user?.afk > -1) {
 		m.reply(
 			`
 ${conn.getName(m.sender)} berhenti AFK${user.afkReason ? ' setelah ' + user.afkReason : ''}

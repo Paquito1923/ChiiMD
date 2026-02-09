@@ -1,4 +1,5 @@
 import syntaxerror from 'syntax-error';
+import * as baileys from 'baileys';
 import { format } from 'util';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -8,7 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(__dirname);
 
 let handler = async (m, _2) => {
-	let { conn, usedPrefix, noPrefix, args, groupMetadata } = _2;
+	let { conn, usedPrefix, noPrefix, groupMetadata } = _2;
 	let _return;
 	let _syntax = '';
 	let _text = (/^=/.test(usedPrefix) ? 'return ' : '') + noPrefix;
@@ -18,7 +19,7 @@ let handler = async (m, _2) => {
 		let f = {
 			exports: {},
 		};
-		let exec = new (async () => {}).constructor('print', 'm', 'require', 'conn', 'args', 'groupMetadata', 'module', 'exports', 'argument', _text);
+		let exec = new (async () => {}).constructor('print', 'm', 'require', 'conn', 'baileys', 'groupMetadata', 'module', 'exports', 'argument', _text);
 		_return = await exec.call(
 			conn,
 			(...args) => {
@@ -29,7 +30,7 @@ let handler = async (m, _2) => {
 			m,
 			require,
 			conn,
-			args,
+			baileys,
 			groupMetadata,
 			f,
 			f.exports,

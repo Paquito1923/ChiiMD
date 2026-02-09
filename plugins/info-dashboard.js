@@ -11,11 +11,10 @@ let handler = async (m) => {
 	let handlers = stats
 		.slice(0, 50)
 		.map(({ name, total, last, success, lastSuccess }, i) => {
-			return `*${i + 1}.* *${name}*\n • *Hits* : ${total}\n • *Success* : ${success}\n • *Last Used* : ${getTime(last)}\n • *Last Success* : ${formatTime(lastSuccess)}`;
+			return `*${i + 1}.* *${name}*\n - *Hits* : ${total}\n - *Success* : ${success}\n - *Last Used* : ${getTime(last)}\n - *Last Success* : ${formatTime(lastSuccess)}`;
 		})
 		.join('\n\n');
-
-	conn.adReply(m.chat, handlers, 'https://telegra.ph/file/cf4f28ed3b9ebdfb30adc.png', m, { title: 'D A S H B O A R D' });
+	m.reply(handlers);
 };
 
 handler.help = ['dashboard'];

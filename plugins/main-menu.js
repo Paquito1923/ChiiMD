@@ -127,24 +127,12 @@ const handler = async (m, { conn, usedPrefix: _p, isOwner, args }) => {
 		conn.sendMessage(
 			m.chat,
 			{
-				document: Buffer.from('YAW :3'),
-				fileName: m.pushName,
-				fileLength: Date.now(),
-				pageCount: new Date().getFullYear(),
+				image: fs.readFileSync('./media/menu.jpg'),
 				caption: style(text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])),
 				contextInfo: {
 					mentionedJid: conn.parseMention(text),
 					forwardingScore: 10,
 					isForwarded: true,
-					externalAdReply: {
-						title: global.namebot,
-						body: `${global.namebot} By ${global.author}`,
-						thumbnail: fs.readFileSync('./media/menu.jpg'),
-						thumbnailUrl: global.source,
-						sourceUrl: global.source,
-						mediaType: 1,
-						renderLargerThumbnail: true,
-					},
 					forwardedNewsletterMessageInfo: {
 						newsletterJid: '120363405875325459@newsletter',
 						serverMessageId: 142,

@@ -63,6 +63,7 @@ ${d.description}
 		return conn.sendButton(
 			m.chat,
 			{
+				image: { url: d.cover_image_url },
 				text: detailText,
 				title: d.title,
 				footer: `Page ${page}/${chapters.meta.total_page || '1'}`,

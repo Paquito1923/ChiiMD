@@ -11,16 +11,8 @@ let handler = async (m, { usedPrefix, command, text }) => {
 		const sthumb = await conn.sendMessage(
 			m.chat,
 			{
-				text: `– 乂 *YouTube - Audio*\n> *- Judul :* ${info.title}\n> *- Channel :* ${info.channelTitle}\n> *- Upload Date :* ${new Date(info.publishedAt).toLocaleString()}\n> *- Durasi :* ${info.duration}\n> *- Views :* ${info.viewCount}\n> *- Likes :* ${info.likeCount}\n> *- Description :* ${info.description}`,
-				contextInfo: {
-					externalAdReply: {
-						title: info.title,
-						thumbnailUrl: info.thumbnails.maxres,
-						mediaType: 1,
-						renderLargerThumbnail: true,
-						sourceUrl: text,
-					},
-				},
+				image: { url: info.thumbnails.maxres },
+				caption: `– 乂 *YouTube - Audio*\n> *- Judul :* ${info.title}\n> *- Channel :* ${info.channelTitle}\n> *- Upload Date :* ${new Date(info.publishedAt).toLocaleString()}\n> *- Durasi :* ${info.duration}\n> *- Views :* ${info.viewCount}\n> *- Likes :* ${info.likeCount}\n> *- Description :* ${info.description}`,
 			},
 			{ quoted: m }
 		);
@@ -52,15 +44,15 @@ export async function ytdown(url, type = 'video') {
 	const api = data.api;
 	if (api?.status == 'ERROR') throw new Error(api.message);
 
-	const media = api.mediaItems.find((m) => m.type.toLowerCase() === type.toLowerCase());
+	const media = api?.mediaItems?.find((m) => m.type.toLowerCase() === type.toLowerCase());
 	if (!media) throw new Error('Media type not found');
 
 	while (true) {
 		const { data: res } = await axios.get(media.mediaUrl);
 
-		if (res.error === 'METADATA_NOT_FOUND') throw new Error('Metadata not found');
+		if (res?.error === 'METADATA_NOT_FOUND') throw new Error('Metadata not found');
 
-		if (res.percent === 'Completed' && res.fileUrl !== 'In Processing...') {
+		if (res?.percent === 'Completed' && res?.fileUrl !== 'In Processing...') {
 			return {
 				info: {
 					title: api.title,
